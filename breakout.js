@@ -15,7 +15,7 @@ window.onload = function() {
 
 function startBallGamePlay() {
     if (!canvasClicked) {
-        setInterval(function(){gameBall.move()}, 8);
+        setInterval(function(){gameBall.move()}, 1);
         canvasClicked = true;   
     }
 }
