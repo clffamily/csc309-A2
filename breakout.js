@@ -4,6 +4,10 @@ var gameScoreBoard = new ScoreBoard();
 var gamePaddle = new Paddle();
 var gameBall = new Ball();
 var canvasClicked = false;
+var bricksCreated = false;
+var blueBricks = [];
+var redBricks = [];
+var yellowBricks = [];
 
 window.onload = function() {
     canvas = document.getElementById("canvas");
@@ -234,6 +238,103 @@ Ball.prototype.changePos = function() {
     this.bottomL[1] += this.changeIny;
 }
 
+function Brick( x , y , color ){
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    this.visible = true;
+}
+
+Brick.prototype.draw = function(){
+    if (this.visible){
+        context.fillStyle = this.color;
+        context.fillRect(this.x,this.y,100,20);
+        context.strokeStyle = '#FFFFFF';
+        context.beginPath();
+        context.moveTo(this.x, this.y);
+        context.lineTo(this.x + 100, this.y);
+        context.lineTo(this.x + 100, this.y + 20);
+        context.lineTo(this.x, this.y + 20);
+        context.lineTo(this.x, this.y);
+        context.lineWidth = 2;
+        context.stroke();
+    }   
+}
+
+function drawBricks(){
+    if (!bricksCreated){
+        createBlueBricks();
+        createRedBricks();
+        createYellowBricks();
+        bricksCreated = true;
+    }
+
+    for (var i = 0; i < blueBricks.length; i++){
+        blueBricks[i].draw();
+    }
+
+    for (var i = 0; i < redBricks.length; i++){
+        redBricks[i].draw();
+    }
+
+    for (var i = 0; i < yellowBricks.length; i++){
+        yellowBricks[i].draw();
+    }
+
+}
+
+function createBlueBricks(){
+    //Create upper layer blue bricks
+    createALineofBricks( 100, 150, 7, "Blue", "x", 100);
+    //Create lower layer blue bricks
+    createALineofBricks( 100, 270, 7, "Blue", "x", 100);
+    // //Create left layer blue bricks
+    createALineofBricks( 100, 170, 5, "Blue", "y", 20);
+    // //Create right layer blue bricks
+    createALineofBricks( 700, 170, 5, "Blue", "y", 20);
+}
+
+function createRedBricks(){
+    //Create upper layer blue bricks
+    createALineofBricks( 200, 170, 5, "Red", "x", 100);
+    //Create lower layer blue bricks
+    createALineofBricks( 200, 250, 5, "Red", "x", 100);
+    // //Create left layer blue bricks
+    createALineofBricks( 200, 190, 3, "Red", "y", 20);
+    // //Create right layer blue bricks
+    createALineofBricks( 600, 190, 3, "Red", "y", 20);   
+}
+
+function createYellowBricks(){
+    //Create three lines of yellow bricks
+    createALineofBricks( 300, 190, 3, "Yellow", "x", 100);
+    createALineofBricks( 300, 210, 3, "Yellow", "x", 100);
+    createALineofBricks( 300, 230, 3, "Yellow", "x", 100);
+}
+
+function createALineofBricks(x,y,iteration,color,direction,increment){
+    var x = x;
+    var y = y;
+    for (var i = 1; i <=iteration; i++) {
+        if (color == "Blue"){
+            var blueBrick = new Brick(x,y,"#00BFFF");
+            blueBricks.push(blueBrick);
+        }
+        else if (color == "Red"){
+            var redBrick = new Brick(x,y,"#CD5C5C");
+            redBricks.push(redBrick);
+        }
+        else if(color == "Yellow"){
+            var yellowBrick = new Brick(x,y,"#FFD700");
+            yellowBricks.push(yellowBrick);
+        }
+        
+        if (direction == "x") { x = x + increment;}
+        else if(direction == "y") { y = y + increment; }
+    }
+}
+
+
 function drawAll () {
 //Clear everyting
     context.clearRect(0, 0, 900, 650);
@@ -255,5 +356,6 @@ function drawAll () {
 
 //Redraw bricks
     //todo
+    drawBricks();
 }
 
