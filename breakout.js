@@ -8,6 +8,7 @@ var bricksCreated = false;
 var blueBricks = [];
 var redBricks = [];
 var yellowBricks = [];
+var intervalID;
 
 window.onload = function() {
     canvas = document.getElementById("canvas");
@@ -19,8 +20,9 @@ window.onload = function() {
 
 function startBallGamePlay() {
     if (!canvasClicked) {
-        setInterval(function(){gameBall.move()}, 1);
-        canvasClicked = true;   
+        canvasClicked = true;
+        intervalID = setInterval(function(){ gameBall.move()}, 1);
+           
     }
 }
 
@@ -95,8 +97,8 @@ Paddle.prototype.move = function(horizontalPos) {
     if (horizontalPos < 105) {
         this.x = 105;
     }
-    else if (horizontalPos > 795) {
-        this.x = 795;
+    else if (horizontalPos > 855) {
+        this.x = canvas.width - 105; //855;
     }
     else {
         this.x = horizontalPos;
@@ -118,8 +120,8 @@ function ballReset (ball) {
     ball.bottomR = [ball.x + ball.size, ball.y + ball.size];
     ball.bottomL = [ball.x, ball.y + ball.size];
     ball.speedMultiplier = 1;
-    ball.changeInx = 1;
-    ball.changeIny = 1;
+    ball.changeInx = 2;
+    ball.changeIny = 2;
 }
 
 Ball.prototype.hitPaddle = function() {
@@ -137,7 +139,7 @@ Ball.prototype.hitPaddle = function() {
         //middle-left of paddle
         if ((this.bottomR[0] <= gamePaddle.topRx - 90) && 
         (this.bottomL[0] >= gamePaddle.topLx + 10)) {
-            this.changeIny = this.changeIny * -1.25;
+            this.changeIny = this.changeIny * -1.1;
             if (this.changeInx >= 0) {
                 this.changeInx = this.changeInx * -1;
             }
@@ -152,7 +154,7 @@ Ball.prototype.hitPaddle = function() {
         //middle-right of paddle
         else if ((this.bottomR[0] <= gamePaddle.topRx -10) && 
         (this.bottomL[0] >= gamePaddle.topLx + 90)) {
-            this.changeIny = this.changeIny * -1.25;
+            this.changeIny = this.changeIny * -1.1;
             if (this.changeInx < 0) {
                 this.changeInx = this.changeInx * -1;
             }
@@ -173,32 +175,32 @@ Ball.prototype.hitPaddle = function() {
 
 Ball.prototype.hitTopBoundary = function() {
     if (this.topL[1] <= 100) {
-        this.changeIny = 1;
+        this.changeIny = 2 * this.speedMultiplier;
         this.changePos();
     }
 }
 
 Ball.prototype.hitLeftBoundary = function() {
-    if (this.topL[0] < 30) {
-        this.changeInx = 1;
+    if (this.topL[0] <= 30) {
+        this.changeInx = 2 * this.speedMultiplier;
         if (this.changeIny < 0) {
-            this.changeIny = -1;
+            this.changeIny = -2 * this.speedMultiplier;
         }
         else {
-            this.changeIny = 1; 
+            this.changeIny = 2 * this.speedMultiplier; 
         }
         this.changePos();
     }
 }
 
 Ball.prototype.hitRightBoundary = function() {
-    if (this.topR[0] > canvas.width - 30) {
-        this.changeInx = -1;
+    if (this.topR[0] >= canvas.width - 30) {
+        this.changeInx = -2 * this.speedMultiplier;
         if (this.changeIny < 0) {
-            this.changeIny = -1;
+            this.changeIny = -2 * this.speedMultiplier;
         }
         else {
-            this.changeIny = 1; 
+            this.changeIny = 2 * this.speedMultiplier; 
         }
         this.changePos();
     }
@@ -223,10 +225,13 @@ Ball.prototype.reset = function() {
 }
 
 Ball.prototype.hitGameOver = function() {
-    if (this.bottomR[1] >= 650) {
+    if (this.bottomR[1] > 650) {
         ballReset(this);
         gameScoreBoard.reset();
-        // you'll also need to reset the bricks
+        brickReset();
+        canvasClicked = false;
+        clearInterval(intervalID);
+        alert("You lost. Try again!");       
     }
 }    
 
@@ -237,14 +242,16 @@ Ball.prototype.draw = function() {
 }
 
 Ball.prototype.move = function() {
-    this.hitPaddle();
-    this.hitTopBoundary();
-    this.hitLeftBoundary();
-    this.hitRightBoundary();
-    this.hitGameOver();
-    this.hitBricks(gameScoreBoard);
-    this.changePos();
-    drawAll();
+    if (canvasClicked) {
+        this.hitPaddle();
+        this.hitTopBoundary();
+        this.hitLeftBoundary();
+        this.hitRightBoundary();
+        this.hitGameOver();
+        this.hitBricks(gameScoreBoard);
+        this.changePos();
+        drawAll();
+    }   
 }
 
 Ball.prototype.changePos = function() {
@@ -302,6 +309,23 @@ Brick.prototype.reset = function (){
     this.visible = true;
 }
 
+function brickReset(){
+    for (var i = 0; i < blueBricks.length; i++){
+        blueBricks[i].reset();
+        blueBricks[i].draw();
+    }
+
+    for (var i = 0; i < redBricks.length; i++){
+        redBricks[i].reset();
+        redBricks[i].draw();
+    }
+
+    for (var i = 0; i < yellowBricks.length; i++){
+        yellowBricks[i].reset();
+        yellowBricks[i].draw();
+    }
+}
+
 function drawBricks(){
     if (!bricksCreated){
         createBlueBricks();
@@ -326,9 +350,9 @@ function drawBricks(){
 
 function createBlueBricks(){
     //Create upper layer blue bricks
-    createALineofBricks( 100, 150, 7, "Blue", "x", 100);
+    createALineofBricks( 30, 150, 9, "Blue", "x", 100);
     //Create lower layer blue bricks
-    createALineofBricks( 100, 270, 7, "Blue", "x", 100);
+    createALineofBricks( 30, 270, 9, "Blue", "x", 100);
     // //Create left layer blue bricks
     createALineofBricks( 100, 170, 5, "Blue", "y", 20);
     // //Create right layer blue bricks
