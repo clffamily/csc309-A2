@@ -97,8 +97,8 @@ Paddle.prototype.move = function(horizontalPos) {
     if (horizontalPos < 105) {
         this.x = 105;
     }
-    else if (horizontalPos > 855) {
-        this.x = canvas.width - 105; //855;
+    else if (horizontalPos > canvas.width - 105) {
+        this.x = canvas.width - 105; 
     }
     else {
         this.x = horizontalPos;
@@ -125,7 +125,7 @@ function ballReset (ball) {
 }
 
 Ball.prototype.hitPaddle = function() {
-    if (this.bottomR[1] >= gamePaddle.y) {
+    if (this.bottomR[1] >= gamePaddle.y - 2) {
         
         //left of paddle    
         if ((this.bottomR[0] <= gamePaddle.topRx - 140) && 
@@ -170,6 +170,7 @@ Ball.prototype.hitPaddle = function() {
         }
         
         this.changePos();
+        drawAll();
     }
 }
 
@@ -177,6 +178,7 @@ Ball.prototype.hitTopBoundary = function() {
     if (this.topL[1] <= 100) {
         this.changeIny = 2 * this.speedMultiplier;
         this.changePos();
+        drawAll();
     }
 }
 
@@ -190,6 +192,7 @@ Ball.prototype.hitLeftBoundary = function() {
             this.changeIny = 2 * this.speedMultiplier; 
         }
         this.changePos();
+        drawAll();
     }
 }
 
@@ -203,6 +206,7 @@ Ball.prototype.hitRightBoundary = function() {
             this.changeIny = 2 * this.speedMultiplier; 
         }
         this.changePos();
+        drawAll();
     }
 }
 
@@ -243,13 +247,13 @@ Ball.prototype.draw = function() {
 
 Ball.prototype.move = function() {
     if (canvasClicked) {
+        this.changePos();
         this.hitPaddle();
         this.hitTopBoundary();
         this.hitLeftBoundary();
         this.hitRightBoundary();
-        this.hitGameOver();
         this.hitBricks(gameScoreBoard);
-        this.changePos();
+        this.hitGameOver();            
         drawAll();
     }   
 }
@@ -281,11 +285,13 @@ function Brick( x , y , color ){
 Brick.prototype.ballHitBrick = function(Ball, scoreboard){
     if (this.visible){
         if (Ball.bottomR[0] > this.topL[0] && Ball.bottomL[0] < this.topR[0]
-            && Ball.bottomR[1] > this.topL[1] && Ball.bottomR[1] < this.bottomR[1]){
+            && Ball.bottomR[1] > this.topL[1] && Ball.topR[1] < this.bottomR[1]){
             this.visible = false;
             Ball.changeIny = Ball.changeIny * -1;
             scoreboard.addPoint();
-        }        
+            Ball.changePos();
+            drawAll();
+        }
     }             
 }
 
