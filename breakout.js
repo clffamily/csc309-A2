@@ -1,15 +1,17 @@
 var canvas;
 var context;
+var blueBricks = [];
+var redBricks = [];
+var yellowBricks = [];
+var allBricks = [blueBricks, redBricks, yellowBricks];
+
+/* Initialization of variables for game play */
 var gameScoreBoard = new ScoreBoard();
 var gamePaddle = new Paddle();
 var gameBall = new Ball();
 var canvasClicked = false;
 var bricksCreated = false;
 var isGameOver = false;
-var blueBricks = [];
-var redBricks = [];
-var yellowBricks = [];
-var allBricks = [blueBricks, redBricks, yellowBricks];
 var intervalID;
 
 window.onload = function() {
@@ -20,6 +22,9 @@ window.onload = function() {
     canvas.onmousemove = paddleMoveGamePlay;     
 }
 
+/* 
+This function deals with setting up the ball at the beginning of a game
+*/
 function startBallGamePlay() {
     if (!canvasClicked) {
         isGameOver = false;
@@ -28,23 +33,26 @@ function startBallGamePlay() {
     }
 }
 
+/* 
+This function deals with paddle movement throughout a game
+*/
 function paddleMoveGamePlay(e) {
     var horizontalPos = e.pageX - canvas.offsetLeft;
     gamePaddle.move(horizontalPos);
 }
 
+
 /*
-When site is first loaded, loads all game-play elements.
+When site is first loaded, draws background.
 */
 function drawBackground() {
-
-    //draw the background
     context.fillStyle = "#000000";
     context.fillRect(0,0,canvas.width,canvas.height);
 }
 
 /*
-
+Draws boundaries top, left and right which the ball will not be abel to pass
+through.
 */
 function drawBoundaries() {
     
@@ -63,14 +71,26 @@ function drawBoundaries() {
     context.fillRect(canvas.width - 30,100,30,canvas.height - 50);
 }
 
+/*
+Class object for the scoreboard which will display score and other messages
+*/
 function ScoreBoard (){
     this.score = 0;
 }
 
+/*
+Method to reset score
+*/
 ScoreBoard.prototype.reset = function() {
     this.score = 0;
 }
 
+/*
+Method to draw scoreboard messages. If the game is not over and the canvas was 
+clicked, display score. If the game is not over and the canvas was not click,
+display some intro message. If the game is over, display some game over 
+message.
+*/
 ScoreBoard.prototype.draw = function() {
     context.font="40px Chicago";
     context.fillStyle = "#FFFFFF";
@@ -88,11 +108,17 @@ ScoreBoard.prototype.draw = function() {
     }
 };
 
+/*
+Method to add point to score
+*/
 ScoreBoard.prototype.addPoint = function() {
     this.score++;
     this.draw();
 };
 
+/*
+Class object for paddle, constructor establishes its initial position.
+*/
 function Paddle () {
     this.x = 450;
     this.y = 630;
@@ -100,11 +126,17 @@ function Paddle () {
     this.topRx = 525;
 }
 
+/*
+Method to draw paddle
+*/
 Paddle.prototype.draw = function() {
     context.fillStyle = "#FFFFFF";
     context.fillRect(this.x - 75,this.y,150,10);
 };
 
+/*
+Method to move paddle based on the horizontal position of the mouse.
+*/
 Paddle.prototype.move = function(horizontalPos) {
     if (horizontalPos < 105) {
         this.x = 105;
@@ -119,11 +151,21 @@ Paddle.prototype.move = function(horizontalPos) {
     this.topRx = this.x + 75;
 };
 
+/*
+Class object for the single ball
+*/
 function Ball () {
     this.size = 10;
     ballReset(this);
 }
 
+/*
+Given a ball object, sets the initial position, and, in relation to this 
+position, sets varibles to keep track of the upper left and right, and lower
+left and right, position of the ball. Also resets the speedMultiplier of the 
+ball (how fast the ball moves), and also the changeInX and changeInY (how much
+the ball moves on either axis).
+*/
 function ballReset (ball) {
     ball.x = 30;
     ball.y = 400;
@@ -136,8 +178,24 @@ function ballReset (ball) {
     ball.changeIny = 2;
 }
 
+//Instance variable to keep track of whether the ball is in the same vacinity
+//as the paddle.
 Ball.prototype.offPaddle = true;
 
+/*
+Method to determine if the ball has hit the paddle. The paddle is divided into
+5 sections, and depending on where the ball hits, it's returning angle will be
+different.
+(1) if the ball hits the extreme ends of the paddle it is returned along the
+same path from which it hit the paddle.
+(2) if the ball hits some middle of left, or middle of right section of the
+paddle then the ball is returned upwards but at a slightly higher angle than
+the reflected angle along the y-axis at the point where the ball hit the 
+paddle.
+(3) if the ball hits the middle of the paddle then it is returned in the
+opposite direction at the angle reflected along the y-axis at the point where 
+it hit the paddle. 
+*/
 Ball.prototype.hitPaddle = function() {
     if (this.bottomR[1] >= gamePaddle.y) {
         
@@ -190,6 +248,10 @@ Ball.prototype.hitPaddle = function() {
     }
 }
 
+/*
+Helper method the returns true and sets offPaddle to false if both 
+conditionRight and conditionLeft are true. Othewise, it returns false.
+*/
 Ball.prototype._hitPaddle = function(conditionRight, conditionLeft) {
     if (conditionRight && conditionLeft && this.offPaddle) {
         this.offPaddle = false;
@@ -198,6 +260,11 @@ Ball.prototype._hitPaddle = function(conditionRight, conditionLeft) {
     return false;
 }
 
+/*
+Method to determine if the ball hit the top boundary, if it has the ball is
+returned in the opposite direction but at the angle reflected along the y-axis
+where the ball struck the boundary.
+*/
 Ball.prototype.hitTopBoundary = function() {
     if (this.topL[1] <= 100) {
         this.changeIny = 2;
@@ -205,6 +272,11 @@ Ball.prototype.hitTopBoundary = function() {
     }
 }
 
+/*
+Method to determine if the ball hit the left boundary, if it has the ball is
+returned in the opposite direction but at the angle reflected along the y-axis
+where the ball struck the boundary.
+*/
 Ball.prototype.hitLeftBoundary = function() {
     if (this.topL[0] <= 30) {
         this.changeInx = 2;
@@ -218,6 +290,11 @@ Ball.prototype.hitLeftBoundary = function() {
     }
 }
 
+/*
+Method to determine if the ball hit the right boundary, if it has the ball is
+returned in the opposite direction but at the angle reflected along the y-axis
+where the ball struck the boundary.
+*/
 Ball.prototype.hitRightBoundary = function() {
     if (this.topR[0] >= canvas.width - 30) {
         this.changeInx = -2;
@@ -231,6 +308,11 @@ Ball.prototype.hitRightBoundary = function() {
     }
 }
 
+/*
+Method to determine if the ball hit a single brick, if it has the ball is
+returned in the opposite direction but at the angle reflected along the y-axis
+where the ball struck the brick.
+*/
 Ball.prototype.hitBricks = function(scoreboard){
     for (var i = 0; i < allBricks.length; i++) {
         for (var j = 0; j < allBricks[i].length; j++) {
@@ -239,10 +321,17 @@ Ball.prototype.hitBricks = function(scoreboard){
     }
 }
 
+/*
+Method to reset the ball position and all its associated instance variables.
+*/
 Ball.prototype.reset = function() {
-    ballReset (this)
+    ballReset(this)
 }
 
+/*
+Method that determines if the ball is outside the range of the canvas/game 
+play. If this is the case then all game play elements are reset.
+*/
 Ball.prototype.hitGameOver = function() {
     if (this.bottomR[1] > 650) {
         ballReset(this);
@@ -255,6 +344,9 @@ Ball.prototype.hitGameOver = function() {
     }
 }    
 
+/*
+Method to draw the ball within canvas context based on its position variables
+*/
 Ball.prototype.draw = function() {
     context.beginPath();
     context.arc(this.x + 5, this.y + 5, 5, 0, 2 * Math.PI);
@@ -264,6 +356,10 @@ Ball.prototype.draw = function() {
     context.stroke();
 }
 
+/*
+Method to move the ball based on its current position and determining whether
+it has hit any game play objects.
+*/
 Ball.prototype.move = function() {
     if (canvasClicked) {
         this.hitPaddle();
@@ -276,6 +372,12 @@ Ball.prototype.move = function() {
     }   
 }
 
+/*
+Method to advance the position of the ball element, by changing its x and y
+position based on changeInx and changeIny instance variable multiplied by 
+the speedMultiplier. Also upper left and right, and lower left and right 
+position variables are updated accordingly.
+*/
 Ball.prototype.changePos = function() {
     newXPos = this.changeInx * this.speedMultiplier
     newYPos = this.changeIny * this.speedMultiplier
@@ -291,6 +393,10 @@ Ball.prototype.changePos = function() {
     this.bottomL[1] += newYPos;
 }
 
+/*
+Class object brick is an element in game play, if the ball hits a brick it
+disappears and we gain a point in score value.
+*/
 function Brick( x , y , color, colorName ){
     this.x = x;
     this.y = y;
@@ -303,6 +409,11 @@ function Brick( x , y , color, colorName ){
     this.visible = true;
 }
 
+/*
+Method to determine if ball has hit the brick object, if this is the case
+the score value in scoreboard in incremented by 1. Depending on which color
+birck the ball hits its speed could be increased or decreased.
+*/
 Brick.prototype.ballHitBrick = function(ball, scoreboard){
     if (this.visible){
         if (this.isBallHitBrick(ball)){
@@ -326,14 +437,22 @@ Brick.prototype.ballHitBrick = function(ball, scoreboard){
     }             
 }
 
-Brick.prototype.isBallHitBrick = function(Ball){
-    if (Ball.bottomR[0] > this.topL[0] && Ball.bottomL[0] < this.topR[0]
-            && Ball.bottomR[1] > this.topL[1] && Ball.topR[1] < this.bottomR[1]){
+/*
+Method returns true if ball position has intersected the position of the brick.
+Returns false otherwise. 
+*/
+Brick.prototype.isBallHitBrick = function(ball){
+    if (ball.bottomR[0] > this.topL[0] && ball.bottomL[0] < this.topR[0]
+            && ball.bottomR[1] > this.topL[1] && ball.topR[1] < this.bottomR[1]){
             return true;
     }
     return false;
 }
 
+/*
+Method the draws a brick. All bricks are the same size 100 x 20 pixels, with
+white border, but color can differ.
+*/
 Brick.prototype.draw = function(){
     if (this.visible){
         context.fillStyle = this.color;
@@ -351,6 +470,9 @@ Brick.prototype.draw = function(){
     }   
 }
 
+/*
+Method to reset brick (ie. make it visible)
+*/
 Brick.prototype.reset = function (){
     this.visible = true;
 }
@@ -366,6 +488,9 @@ function ballOnBrick() {
     return false;
 }
 
+/*
+Return true if the ball has intersected the space of any of the bricks
+*/
 function brickReset(){
     for (var i = 0; i < allBricks.length; i++) {
         for (var j = 0; j < allBricks[i].length; j++) {
@@ -374,6 +499,9 @@ function brickReset(){
     }
 }
 
+/*
+Return true if any bricks are visible.
+*/
 function isBrickVisible() {
     for (var i = 0; i < allBricks.length; i++) {
         for (var j = 0; j < allBricks[i].length; j++) {
@@ -385,7 +513,11 @@ function isBrickVisible() {
     return false;
 }
 
-
+/*
+Function that creates bricks at the initialization of a game, resets bricks 
+if non are visible and the ball does not intersect any bricks, and finally 
+draws all bricks that are currently set to visible.
+*/
 function drawBricks(){
     if (!bricksCreated){
         createBlueBricks();
@@ -403,6 +535,9 @@ function drawBricks(){
     }
 }
 
+/*
+Function to create all blue bricks.
+*/
 function createBlueBricks(){
     //Create upper layer blue bricks
     createALineofBricks( 30, 150, 9, "Blue", "x", 100);
@@ -414,6 +549,9 @@ function createBlueBricks(){
     createALineofBricks( 700, 170, 5, "Blue", "y", 20);
 }
 
+/*
+Function to create all red bricks.
+*/
 function createRedBricks(){
     //Create upper layer blue bricks
     createALineofBricks( 200, 170, 5, "Red", "x", 100);
@@ -425,6 +563,9 @@ function createRedBricks(){
     createALineofBricks( 600, 190, 3, "Red", "y", 20);   
 }
 
+/*
+Function to create all yellow bricks.
+*/
 function createYellowBricks(){
     //Create three lines of yellow bricks
     createALineofBricks( 300, 190, 3, "Yellow", "x", 100);
@@ -432,6 +573,11 @@ function createYellowBricks(){
     createALineofBricks( 300, 230, 3, "Yellow", "x", 100);
 }
 
+/*
+Function to create a line of bricks from a starting position of x and y, the
+number of bricks (iteration), the color of brick, the direction line of bricks,
+and the spacing between bricks (increment).
+*/
 function createALineofBricks(x,y,iteration,color,direction,increment){
     var x = x;
     var y = y;
@@ -454,7 +600,10 @@ function createALineofBricks(x,y,iteration,color,direction,increment){
     }
 }
 
-
+/*
+Function to draw all elements of game play, at each call it clears the 
+context.
+*/
 function drawAll () { 
 //Clear context
     context.clearRect(0, 0, canvas.width, canvas.height);
