@@ -170,8 +170,8 @@ Paddle.prototype.move = function(horizontalPos) {
     else {
         this.x = horizontalPos;
     }
-    this.topLx = this.x - (this.length / 2);
-    this.topRx = this.x + (this.length / 2);
+    this.topLx = this.x - (this.length / 2) - 10;
+    this.topRx = this.x + (this.length / 2) + 10;
 };
 
 /*
@@ -239,7 +239,7 @@ Ball.prototype.hitPaddle = function() {
         }
                     
         //middle-left of paddle
-        if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 
+        else if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 
         (gamePaddle.length - fivePercentLength - twentyPercentLength)), 
         (this.bottomL[0] >= gamePaddle.topLx + fivePercentLength))) {
             this.changeIny = this.changeIny * -1.1;
