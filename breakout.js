@@ -10,6 +10,7 @@ var gameScoreBoard = new ScoreBoard();
 var gamePaddle = new Paddle();
 var gameBall = new Ball();
 var ballHitTop = false;
+var paddleShrunk = false;
 var canvasClicked = false;
 var bricksCreated = false;
 var isGameOver = false;
@@ -125,18 +126,33 @@ function Paddle () {
     this.y = 630;
     this.topLx = 375;    
     this.topRx = 525;
-    this.length = 250;
+    this.length = 300;
 }
 
+/*
+Method to reset paddle
+*/
+Paddle.prototype.reset = function() {
+    this.length = 300;
+}
+/*
+Method to shrink paddle
+*/
+Paddle.prototype.shrink = function() {
+    this.length = this.length/2;
+}
 /*
 Method to draw paddle
 */
 Paddle.prototype.draw = function() {
+    if (ballHitTop && !paddleShrunk) {
+        this.shrink();
+        paddleShrunk = true;
+    }
     context.fillStyle = "#FFFFFF";
     context.fillRect(this.x - (this.length / 2),this.y,this.length,10);
 };
 
-150
 
 /*
 Method to move paddle based on the horizontal position of the mouse.
@@ -223,7 +239,7 @@ Ball.prototype.hitPaddle = function() {
         //middle-left of paddle
         if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 
         (gamePaddle.length - fivePercentLength - twentyPercentLength)), 
-        (this.bottomL[0] >= gamePaddle.topLx + 10))) {
+        (this.bottomL[0] >= gamePaddle.topLx + fivePercentLength))) {
             this.changeIny = this.changeIny * -1.1;
             if (this.changeInx >= 0) {
                 this.changeInx = this.changeInx * -1;
@@ -233,14 +249,14 @@ Ball.prototype.hitPaddle = function() {
         //middle of paddle
         else if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 
         (gamePaddle.length - fivePercentLength - twentyPercentLength - fiftyPercentLength)), 
-        (this.bottomL[0] >= gamePaddle.topLx + 60))) {
+        (this.bottomL[0] >= gamePaddle.topLx + fivePercentLength + twentyPercentLength))) {
             this.changeIny = this.changeIny * -1;
         }
         
         //middle-right of paddle
         else if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx -
         (gamePaddle.length - fivePercentLength - (twentyPercentLength * 2) - fiftyPercentLength)), 
-        (this.bottomL[0] >= gamePaddle.topLx + 90))) {
+        (this.bottomL[0] >= gamePaddle.topLx + fivePercentLength + twentyPercentLength + fiftyPercentLength))) {
             this.changeIny = this.changeIny * -1.1;
             if (this.changeInx < 0) {
                 this.changeInx = this.changeInx * -1;
@@ -249,7 +265,7 @@ Ball.prototype.hitPaddle = function() {
         
         //right of paddle
         else if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx) && 
-        (this.bottomL[0] >= gamePaddle.topLx + 140))) {
+        (this.bottomL[0] >= gamePaddle.topLx + fivePercentLength + (twentyPercentLength * 2) + fiftyPercentLength))) {
             this.changeIny = this.changeIny * -1.25;
             if (this.changeInx < 0) {
                 this.changeInx = this.changeInx * -1;
@@ -353,8 +369,11 @@ Ball.prototype.hitGameOver = function() {
         ballReset(this);
         gameScoreBoard.reset();
         brickReset();
+        gamePaddle.reset();
         canvasClicked = false;
         isGameOver = true;
+        ballHitTop = false;
+        paddleShrunk = false;
         clearInterval(intervalID);
         //alert("You lost. Try again!");       
     }
