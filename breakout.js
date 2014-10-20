@@ -9,6 +9,7 @@ var allBricks = [blueBricks, redBricks, yellowBricks];
 var gameScoreBoard = new ScoreBoard();
 var gamePaddle = new Paddle();
 var gameBall = new Ball();
+var ballHitTop = false;
 var canvasClicked = false;
 var bricksCreated = false;
 var isGameOver = false;
@@ -124,6 +125,7 @@ function Paddle () {
     this.y = 630;
     this.topLx = 375;    
     this.topRx = 525;
+    this.length = 250;
 }
 
 /*
@@ -131,24 +133,27 @@ Method to draw paddle
 */
 Paddle.prototype.draw = function() {
     context.fillStyle = "#FFFFFF";
-    context.fillRect(this.x - 75,this.y,150,10);
+    context.fillRect(this.x - (this.length / 2),this.y,this.length,10);
 };
+
+150
 
 /*
 Method to move paddle based on the horizontal position of the mouse.
 */
 Paddle.prototype.move = function(horizontalPos) {
-    if (horizontalPos < 105) {
-        this.x = 105;
+    lengthPlusBound = 30 + (this.length / 2)
+    if (horizontalPos < lengthPlusBound) {
+        this.x = lengthPlusBound;
     }
-    else if (horizontalPos > canvas.width - 105) {
-        this.x = canvas.width - 105; 
+    else if (horizontalPos > canvas.width - lengthPlusBound) {
+        this.x = canvas.width - lengthPlusBound; 
     }
     else {
         this.x = horizontalPos;
     }
-    this.topLx = this.x - 75;
-    this.topRx = this.x + 75;
+    this.topLx = this.x - (this.length / 2);
+    this.topRx = this.x + (this.length / 2);
 };
 
 /*
@@ -197,6 +202,12 @@ opposite direction at the angle reflected along the y-axis at the point where
 it hit the paddle. 
 */
 Ball.prototype.hitPaddle = function() {
+    
+    var fivePercentLength = gamePaddle.length * 0.05;
+    var twentyPercentLength = gamePaddle.length * 0.2;
+    var fiftyPercentLength = gamePaddle.length * 0.5;
+    
+    
     if (this.bottomR[1] >= gamePaddle.y) {
         
         //left of paddle    
@@ -267,6 +278,7 @@ where the ball struck the boundary.
 */
 Ball.prototype.hitTopBoundary = function() {
     if (this.topL[1] <= 100) {
+        ballHitTop = true;
         this.changeIny = 2;
         this.changePos();
     }
