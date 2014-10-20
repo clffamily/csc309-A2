@@ -436,9 +436,9 @@ function Brick( x , y , color, colorName ){
     this.x = x;
     this.y = y;
     this.topL = [x , y];
-    this.topR = [x + 100, y];
+    this.topR = [x + 60, y];
     this.bottomL = [x, y + 20];
-    this.bottomR = [x + 100, y + 20]; 
+    this.bottomR = [x + 60, y + 20]; 
     this.color = color;
     this.colorName = colorName;
     this.visible = true;
@@ -491,12 +491,12 @@ white border, but color can differ.
 Brick.prototype.draw = function(){
     if (this.visible){
         context.fillStyle = this.color;
-        context.fillRect(this.x,this.y,100,20);
+        context.fillRect(this.x,this.y,60,20);
         context.strokeStyle = '#FFFFFF';
         context.beginPath();
         context.moveTo(this.x, this.y);
-        context.lineTo(this.x + 100, this.y);
-        context.lineTo(this.x + 100, this.y + 20);
+        context.lineTo(this.x + 60, this.y);
+        context.lineTo(this.x + 60, this.y + 20);
         context.lineTo(this.x, this.y + 20);
         context.lineTo(this.x, this.y);
         context.lineWidth = 2;
@@ -575,28 +575,31 @@ Function to create all blue bricks.
 */
 function createBlueBricks(){
     //Create upper layer blue bricks
-    createALineofBricks( 30, 150, 9, "Blue", "x", 100);
+    createALineofBricks( 30, 150, 15, "Blue", "x", 60);
     //Create lower layer blue bricks
-    createALineofBricks( 30, 270, 9, "Blue", "x", 100);
-    createALineofBricks( 30, 290, 9, "Blue", "x", 100);
+    createALineofBricks( 30, 290, 15, "Blue", "x", 60);
     // //Create left layer blue bricks
-    createALineofBricks( 100, 170, 5, "Blue", "y", 20);
-    // //Create right layer blue bricks
-    createALineofBricks( 700, 170, 5, "Blue", "y", 20);
+    createALineofBricks( 30, 170, 6, "Blue", "y", 20);
+    createALineofBricks( 90, 170, 6, "Blue", "y", 20);
+    //Create right layer blue bricks
+    createALineofBricks( 810, 170, 6, "Blue", "y", 20);
+    createALineofBricks( 870, 170, 6, "Blue", "y", 20);
 }
 
 /*
 Function to create all red bricks.
 */
 function createRedBricks(){
-    //Create upper layer blue bricks
-    createALineofBricks( 200, 170, 5, "Red", "x", 100);
-    //Create lower layer blue bricks
-    createALineofBricks( 200, 250, 5, "Red", "x", 100);
-    // //Create left layer blue bricks
-    createALineofBricks( 200, 190, 3, "Red", "y", 20);
-    // //Create right layer blue bricks
-    createALineofBricks( 600, 190, 3, "Red", "y", 20);   
+    //Create upper layer red bricks
+    createALineofBricks( 150, 170, 11, "Red", "x", 60);
+    //Create lower layer red bricks
+    createALineofBricks( 150, 270, 11, "Red", "x", 60);
+    //Create left layer red bricks
+    createALineofBricks( 150, 190, 4, "Red", "y", 20);
+    createALineofBricks( 210, 190, 4, "Red", "y", 20);
+    //Create right layer red bricks
+    createALineofBricks( 690, 190, 4, "Red", "y", 20); 
+    createALineofBricks( 750, 190, 4, "Red", "y", 20);  
 }
 
 /*
@@ -604,9 +607,10 @@ Function to create all yellow bricks.
 */
 function createYellowBricks(){
     //Create three lines of yellow bricks
-    createALineofBricks( 300, 190, 3, "Yellow", "x", 100);
-    createALineofBricks( 300, 210, 3, "Yellow", "x", 100);
-    createALineofBricks( 300, 230, 3, "Yellow", "x", 100);
+    createALineofBricks( 270, 190, 7, "Yellow", "x", 60);
+    createALineofBricks( 270, 210, 7, "Yellow", "x", 60);
+    createALineofBricks( 270, 230, 7, "Yellow", "x", 60);
+    createALineofBricks( 270, 250, 7, "Yellow", "x", 60);
 }
 
 /*
