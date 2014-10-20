@@ -211,7 +211,8 @@ Ball.prototype.hitPaddle = function() {
     if (this.bottomR[1] >= gamePaddle.y) {
         
         //left of paddle    
-        if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 140),        
+        if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 
+        (gamePaddle.length - fivePercentLength)),        
         (this.bottomL[0] >= gamePaddle.topLx))) {
             this.changeIny = this.changeIny * -1.25;
             if (this.changeInx >= 0) {
@@ -220,7 +221,8 @@ Ball.prototype.hitPaddle = function() {
         }
                     
         //middle-left of paddle
-        if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 90), 
+        if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 
+        (gamePaddle.length - fivePercentLength - twentyPercentLength)), 
         (this.bottomL[0] >= gamePaddle.topLx + 10))) {
             this.changeIny = this.changeIny * -1.1;
             if (this.changeInx >= 0) {
@@ -229,13 +231,15 @@ Ball.prototype.hitPaddle = function() {
         }
         
         //middle of paddle
-        else if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 60), 
+        else if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx - 
+        (gamePaddle.length - fivePercentLength - twentyPercentLength - fiftyPercentLength)), 
         (this.bottomL[0] >= gamePaddle.topLx + 60))) {
             this.changeIny = this.changeIny * -1;
         }
         
         //middle-right of paddle
-        else if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx -10), 
+        else if (this._hitPaddle((this.bottomR[0] <= gamePaddle.topRx -
+        (gamePaddle.length - fivePercentLength - (twentyPercentLength * 2) - fiftyPercentLength)), 
         (this.bottomL[0] >= gamePaddle.topLx + 90))) {
             this.changeIny = this.changeIny * -1.1;
             if (this.changeInx < 0) {
