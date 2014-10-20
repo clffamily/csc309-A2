@@ -543,6 +543,7 @@ function createBlueBricks(){
     createALineofBricks( 30, 150, 9, "Blue", "x", 100);
     //Create lower layer blue bricks
     createALineofBricks( 30, 270, 9, "Blue", "x", 100);
+    createALineofBricks( 30, 290, 9, "Blue", "x", 100);
     // //Create left layer blue bricks
     createALineofBricks( 100, 170, 5, "Blue", "y", 20);
     // //Create right layer blue bricks
