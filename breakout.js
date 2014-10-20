@@ -134,6 +134,8 @@ Method to reset paddle
 */
 Paddle.prototype.reset = function() {
     this.length = 300;
+    this.x = 450;
+    this.y = 630;
 }
 /*
 Method to shrink paddle
